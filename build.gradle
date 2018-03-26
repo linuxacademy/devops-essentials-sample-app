@@ -1,0 +1,6 @@
+task test {
+  assert file ('./src/index.html').exists()
+}
+
+task build
+build.dependsOn test
