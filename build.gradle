@@ -1,0 +1,22 @@
+task test {
+  assert file ('./src/index.html').exists()
+}
+
+task build {
+	//this code is here to help our lab grader determine the state of the lab. It should be omitted in a real-world situation.
+	String index = new File('src/index.html').text
+	String labState
+	if (index.contains("DevOps is awesome!")) {
+		if (new File('src/brokenDeploy.state').isFile()) {
+			labState = "rollbackDeploy"
+		} else {
+			labState = "firstDeploy"
+		}
+	} else if (index.contains("DevOps is awesbfgdsfkjh!")) {
+		labState = "brokenDeploy"
+	} else {
+		labState = "unknown"
+	}
+	new File("src/${labState}.state").text = " "
+}
+build.dependsOn test
