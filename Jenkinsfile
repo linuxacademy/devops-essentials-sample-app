@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Running build automation'
+                echo 'Running build automation in feature 1'
                 sh './gradlew build'
                 archiveArtifacts artifacts: 'src/index.html'
             }
