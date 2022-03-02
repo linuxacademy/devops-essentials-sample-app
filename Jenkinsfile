@@ -13,7 +13,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
+                withCredentials([string(credentialsId: 'cloud_user', variable: 'EpKvhe7_')]) {
                     sshPublisher(
                         failOnError: true,
                         publishers: [
@@ -21,7 +21,7 @@ pipeline {
                                 configName: 'staging',
                                 sshCredentials: [
                                     username: 'cloud_user',
-                                    encryptedPassphrase: "$USERPASS"
+                                    encryptedPassphrase: "EpKvhe7_"
                                 ], 
                                 transfers: [
                                     sshTransfer(
@@ -42,7 +42,7 @@ pipeline {
             steps {
                 input 'Does the staging environment look OK?'
                 milestone(1)
-                withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
+                withCredentials([string(credentialsId: 'cloud_user', variable: 'EpKvhe7_')]) {
                     sshPublisher(
                         failOnError: true,
                         publishers: [
@@ -50,7 +50,7 @@ pipeline {
                                 configName: 'production',
                                 sshCredentials: [
                                     username: 'cloud_user',
-                                    encryptedPassphrase: "$USERPASS"
+                                    encryptedPassphrase: "EpKvhe7_"
                                 ], 
                                 transfers: [
                                     sshTransfer(
