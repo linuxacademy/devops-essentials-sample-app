@@ -1,0 +1,40 @@
+{
+	"id": 66099148,
+	"name": "Azure Service Health Alert",
+	"type": "event-v2 alert",
+	"query": "events(\"tags:(\\\"incident_type:serviceissue\\\" (\\\"level:warning\\\" OR \\\"level:error:\\\")) source:azure_service_health\").rollup(\"count\").by(\"service\").last(\"5m\") > 0",
+	"message": "@joe.armstrong@insight.com @ray.locklear@insight.com",
+	"tags": [],
+	"options": {
+		"thresholds": {
+			"critical": 0,
+			"period": {
+				"digit": 5,
+				"name": "5 minute average",
+				"no_data_timeframe": 10,
+				"seconds": 300,
+				"tense": "last",
+				"text": "5 minutes",
+				"unit": "minutes",
+				"value": "last_5m",
+				"timeString": "5m",
+				"unitAbbreviation": "m"
+			},
+			"timeAggregator": "avg",
+			"comparison": ">"
+		},
+		"enable_logs_sample": true,
+		"notify_audit": false,
+		"restriction_query": null,
+		"timeout_h": 0,
+		"renotify_interval": 0,
+		"silenced": {},
+		"notify_no_data": false,
+		"include_tags": true,
+		"groupby_simple_monitor": false,
+		"escalation_message": "",
+		"new_group_delay": 60
+	},
+	"priority": null,
+	"restricted_roles": null
+}
