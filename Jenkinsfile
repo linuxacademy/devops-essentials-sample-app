@@ -49,7 +49,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                input 'Does the staging environment look OK?'
+                input 'Does the staging environment is looking fine?'
                 milestone(1)
                 withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
                     sshPublisher(
