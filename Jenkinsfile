@@ -44,7 +44,7 @@ pipeline {
             steps {
                 input 'Does the staging environment is looking fine?'
                 milestone(1)
-                withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
+                withCredentials([string(credentialsId: '', variable: '')]) {
                     sshPublisher(
                         failOnError: true,
                         publishers: [
