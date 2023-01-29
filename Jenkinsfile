@@ -15,7 +15,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
+                withCredentials([string(credentialsId: 'gladzeka', variable: 'Chigarisse11!!')]) {
                     sshPublisher(
                         failOnError: true,
                         publishers: [
