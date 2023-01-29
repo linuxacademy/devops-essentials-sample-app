@@ -8,6 +8,14 @@ pipeline {
                 archiveArtifacts artifacts: 'src/index.html'
             }
         }
+       stage ('Compile Stage') {
+
+        steps {
+            withMaven(maven : 'apache-maven-3.6.1') {
+                bat'mvn clean compile'
+            }
+        }
+    }
         stage('DeployToStage') {
             when {
                 branch 'master'
