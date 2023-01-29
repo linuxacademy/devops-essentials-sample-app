@@ -15,7 +15,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                withCredentials([string(credentialsId: 'zacarias.chironda@nordcloud.com', variable: '')]) {
+                withCredentials([string(credentialsId: '', variable: '')]) {
                     sshPublisher(
                         failOnError: true,
                         publishers: [
