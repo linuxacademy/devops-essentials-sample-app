@@ -1,14 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
-            steps {
-                echo 'Running build automation'
-                sh './gradlew build'
-                archiveArtifacts artifacts: 'src/index.html'
-            }
-        }
-       stage ('Compile Stage') {
+        stage ('Compile Stage') {
 
         steps {
             withMaven(maven : 'apache-maven-3.6.1') {
@@ -16,6 +9,14 @@ pipeline {
             }
         }
     }
+        stage('Build') {
+            steps {
+                echo 'Running build automation'
+                sh './gradlew build'
+                archiveArtifacts artifacts: 'src/index.html'
+            }
+        }
+      
         stage('DeployToStage') {
             when {
                 branch 'master'
