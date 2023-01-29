@@ -15,7 +15,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                withCredentials([string(credentialsId: 'zacarias.chironda@nordcloud.com', variable: ' ')]) {
+                withCredentials([string(credentialsId: 'gladzeka', variable: 'Chigarisse11!!')]) {
                     sshPublisher(
                         failOnError: true,
                         publishers: [
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 input 'Does the staging environment is looking fine?'
                 milestone(1)
-                withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
+                withCredentials([string(credentialsId: '', variable: '')]) {
                     sshPublisher(
                         failOnError: true,
                         publishers: [
