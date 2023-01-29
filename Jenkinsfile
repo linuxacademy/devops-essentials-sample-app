@@ -1,19 +1,21 @@
 pipeline {
     agent any
     stages {
+         
         stage('Build') {
             steps {
                 echo 'Running build automation'
-                sh './gradlew build'
+                bat './gradlew build'
                 archiveArtifacts artifacts: 'src/index.html'
             }
         }
+      
         stage('DeployToStage') {
             when {
                 branch 'master'
             }
             steps {
-                withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
+                withCredentials([string(credentialsId: '', variable: '')]) {
                     sshPublisher(
                         failOnError: true,
                         publishers: [
@@ -40,9 +42,9 @@ pipeline {
                 branch 'master'
             }
             steps {
-                input 'Does the staging environment look OK?'
+                input 'Does the staging environment is looking fine?'
                 milestone(1)
-                withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
+                withCredentials([string(credentialsId: '', variable: '')]) {
                     sshPublisher(
                         failOnError: true,
                         publishers: [
