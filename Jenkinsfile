@@ -18,7 +18,7 @@ pipeline {
                         failOnError: true,
                         publishers: [
                             sshPublisherDesc(
-                                configName: 'staging',
+                                configName: 'staging your mama',
                                 sshCredentials: [
                                     username: 'cloud_user',
                                     encryptedPassphrase: "$USERPASS"
