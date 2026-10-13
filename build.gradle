@@ -1,22 +1,29 @@
-task test {
-  assert file ('./src/index.html').exists()
+plugins {
+    id 'base'
 }
 
-task build {
-	//this code is here to help our lab grader determine the state of the lab. It should be omitted in a real-world situation.
-	String index = new File('src/index.html').text
-	String labState
-	if (index.contains("DevOps is awesome!")) {
-		if (new File('src/brokenDeploy.state').isFile()) {
-			labState = "rollbackDeploy"
-		} else {
-			labState = "firstDeploy"
-		}
-	} else if (index.contains("DevOps is awesbfgdsfkjh!")) {
-		labState = "brokenDeploy"
-	} else {
-		labState = "unknown"
-	}
-	new File("src/${labState}.state").text = " "
+def siteDir = layout.projectDirectory.dir('src')
+def requiredFiles = ['index.html', 'css/styles.css', 'js/main.js', 'favicon.svg']
+
+tasks.register('verifySite') {
+    group = 'verification'
+    description = 'Checks that every file the site depends on is present.'
+    inputs.dir(siteDir)
+    doLast {
+        def missing = requiredFiles.findAll { !siteDir.file(it).asFile.exists() }
+        if (missing) {
+            throw new GradleException("Missing site files: ${missing.join(', ')}")
+        }
+    }
 }
-build.dependsOn test
+
+tasks.register('siteZip', Zip) {
+    group = 'build'
+    description = 'Packages the static site as a deployable archive.'
+    from siteDir
+    archiveFileName = "${rootProject.name}.zip"
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+}
+
+check.dependsOn tasks.named('verifySite')
+assemble.dependsOn tasks.named('siteZip')

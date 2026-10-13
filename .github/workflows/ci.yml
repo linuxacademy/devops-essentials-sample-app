@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and verify
+        run: ./gradlew build --no-daemon
+
+      - name: Validate HTML
+        run: npx --yes html-validate@8 src/index.html
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: build/distributions/*.zip
+          if-no-files-found: error
+
+  deploy-pages:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - name: Version static assets
+        run: |
+          sed -i "s#\(css/styles.css\|js/main.js\)\"#\1?v=${GITHUB_SHA::7}\"#" src/index.html
+          grep -n "?v=" src/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: src
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

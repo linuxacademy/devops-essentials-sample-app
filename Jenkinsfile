@@ -1,67 +1,52 @@
+// Deploys the packaged site to a host defined in Jenkins under
+// "Publish over SSH". Host credentials are managed there, not in this file.
+def deployTo(String serverName) {
+    sshPublisher(
+        failOnError: true,
+        publishers: [
+            sshPublisherDesc(
+                configName: serverName,
+                transfers: [
+                    sshTransfer(
+                        sourceFiles: 'src/**',
+                        removePrefix: 'src/'
+                    )
+                ]
+            )
+        ]
+    )
+}
+
 pipeline {
     agent any
+
+    options {
+        timestamps()
+        timeout(time: 30, unit: 'MINUTES')
+        disableConcurrentBuilds()
+    }
+
     stages {
         stage('Build') {
             steps {
-                echo 'Running build automation'
                 sh './gradlew build'
-                archiveArtifacts artifacts: 'src/index.html'
+                archiveArtifacts artifacts: 'build/distributions/*.zip', fingerprint: true
             }
         }
-        stage('DeployToStage') {
-            when {
-                branch 'master'
-            }
+
+        stage('Deploy to staging') {
+            when { branch 'master' }
             steps {
-                withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
-                    sshPublisher(
-                        failOnError: true,
-                        publishers: [
-                            sshPublisherDesc(
-                                configName: 'staging',
-                                sshCredentials: [
-                                    username: 'cloud_user',
-                                    encryptedPassphrase: "$USERPASS"
-                                ], 
-                                transfers: [
-                                    sshTransfer(
-                                        sourceFiles: 'src/**',
-                                        removePrefix: 'src/'
-                                    )
-                                ]
-                            )
-                        ]
-                    )
-                }
+                deployTo('staging')
             }
         }
-        stage('DeployToProd') {
-            when {
-                branch 'master'
-            }
+
+        stage('Deploy to production') {
+            when { branch 'master' }
             steps {
-                input 'Does the staging environment look OK?'
+                input message: 'Does the staging environment look OK?'
                 milestone(1)
-                withCredentials([string(credentialsId: 'cloud_user_pw', variable: 'USERPASS')]) {
-                    sshPublisher(
-                        failOnError: true,
-                        publishers: [
-                            sshPublisherDesc(
-                                configName: 'production',
-                                sshCredentials: [
-                                    username: 'cloud_user',
-                                    encryptedPassphrase: "$USERPASS"
-                                ], 
-                                transfers: [
-                                    sshTransfer(
-                                        sourceFiles: 'src/**',
-                                        removePrefix: 'src/'
-                                    )
-                                ]
-                            )
-                        ]
-                    )
-                }
+                deployTo('production')
             }
         }
     }

@@ -1,3 +1,14 @@
+# Build output
+.gradle/
+build/
+
+# OS and editor files
 .DS_Store
-.gradle
-src/*.state
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# Local environment
+.env
+*.log

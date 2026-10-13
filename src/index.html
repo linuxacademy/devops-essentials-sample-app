@@ -1,11 +1,248 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
-	<title>DevOps Essentials Sample App</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DevOps Essentials Sample App</title>
+  <meta name="description" content="A small static site used to demonstrate a build, test and deploy pipeline with Gradle, Jenkins and GitHub Actions.">
+  <meta name="theme-color" content="#0b1220">
+  <meta property="og:title" content="DevOps Essentials Sample App">
+  <meta property="og:description" content="A static site delivered through an automated build, test and deploy pipeline.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    try {
+      var saved = localStorage.getItem('theme');
+      if (saved) document.documentElement.dataset.theme = saved;
+    } catch (e) {}
+  </script>
 </head>
-<body style="background-color: #1A729D;">
-    <h1 style="font-family: Courier; color: #434342; font-size: 48px; text-align: center;">
-        DevOps is great!
-    </h1>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="DevOps Essentials, home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>devops-essentials</span>
+      </a>
+      <nav aria-label="Primary">
+        <ul class="nav-list">
+          <li><a href="#pipeline">Pipeline</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#config">Under the hood</a></li>
+          <li><a href="#practices">Practices</a></li>
+          <li><a href="#stack">Stack</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Toggle colour theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="container hero-inner">
+        <p class="eyebrow">Continuous delivery sample</p>
+        <h1>DevOps is awesome<span class="accent">.</span></h1>
+        <p class="lead">A small static site, shipped the way production software should be: built, tested and deployed automatically on every change.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#pipeline">See the pipeline</a>
+          <a class="btn btn-ghost" href="https://github.com/Gurmeta/devops-essentials-sample-app">View source</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pipeline" aria-labelledby="pipeline-title">
+      <div class="container">
+        <h2 id="pipeline-title">From commit to production</h2>
+        <p class="section-lead">Every merge to <code>master</code> moves through the same four stages.</p>
+        <ol class="pipeline">
+          <li class="stage">
+            <span class="stage-index">01</span>
+            <h3>Build</h3>
+            <p>Gradle validates the project and packages the site as a build artifact.</p>
+          </li>
+          <li class="stage">
+            <span class="stage-index">02</span>
+            <h3>Test</h3>
+            <p>Static checks confirm the required files exist and the markup is valid.</p>
+          </li>
+          <li class="stage">
+            <span class="stage-index">03</span>
+            <h3>Stage</h3>
+            <p>The artifact is published to a staging host for a final manual review.</p>
+          </li>
+          <li class="stage">
+            <span class="stage-index">04</span>
+            <h3>Release</h3>
+            <p>After approval the same artifact is promoted to production over SSH.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="architecture" aria-labelledby="architecture-title">
+      <div class="container">
+        <h2 id="architecture-title">Architecture</h2>
+        <p class="section-lead">Two pipelines share one repository: GitHub Actions validates every pull request and publishes this site, while Jenkins promotes the packaged artifact to staging and production.</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 880 330" role="img" aria-labelledby="diagram-title diagram-desc">
+            <title id="diagram-title">Delivery architecture</title>
+            <desc id="diagram-desc">A developer opens a pull request on GitHub. GitHub Actions builds and validates it, then publishes the site to GitHub Pages after merge. Jenkins builds the artifact, deploys to staging over SSH, waits for manual approval and deploys to production.</desc>
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" class="d-arrow"/>
+              </marker>
+            </defs>
+
+            <g class="d-node"><rect x="10" y="125" width="130" height="64" rx="10"/><text x="75" y="153" text-anchor="middle">Developer</text><text x="75" y="173" text-anchor="middle" class="d-sub">feature branch</text></g>
+            <g class="d-node"><rect x="200" y="125" width="150" height="64" rx="10"/><text x="275" y="153" text-anchor="middle">GitHub</text><text x="275" y="173" text-anchor="middle" class="d-sub">pull request + review</text></g>
+
+            <g class="d-node d-accent"><rect x="430" y="30" width="180" height="64" rx="10"/><text x="520" y="58" text-anchor="middle">GitHub Actions</text><text x="520" y="78" text-anchor="middle" class="d-sub">build, validate HTML</text></g>
+            <g class="d-node"><rect x="690" y="30" width="180" height="64" rx="10"/><text x="780" y="58" text-anchor="middle">GitHub Pages</text><text x="780" y="78" text-anchor="middle" class="d-sub">this website</text></g>
+
+            <g class="d-node d-accent"><rect x="430" y="220" width="180" height="64" rx="10"/><text x="520" y="248" text-anchor="middle">Jenkins</text><text x="520" y="268" text-anchor="middle" class="d-sub">Gradle build, artifact</text></g>
+            <g class="d-node"><rect x="690" y="190" width="180" height="50" rx="10"/><text x="780" y="220" text-anchor="middle">Staging (SSH)</text></g>
+            <g class="d-node"><rect x="690" y="265" width="180" height="50" rx="10"/><text x="780" y="295" text-anchor="middle">Production (SSH)</text></g>
+
+            <path class="d-line" d="M140 157 H198" marker-end="url(#arrow)"/>
+            <path class="d-line" d="M350 145 C390 145 390 62 428 62" marker-end="url(#arrow)"/>
+            <path class="d-line" d="M350 170 C390 170 390 252 428 252" marker-end="url(#arrow)"/>
+            <path class="d-line" d="M610 62 H688" marker-end="url(#arrow)"/>
+            <path class="d-line" d="M610 242 C650 242 650 215 688 215" marker-end="url(#arrow)"/>
+            <path class="d-line d-dash" d="M780 240 V263" marker-end="url(#arrow)"/>
+            <text x="764" y="257" class="d-sub" text-anchor="end">manual approval</text>
+            <text x="380" y="106" class="d-sub" text-anchor="end">on PR + push</text>
+          </svg>
+          <figcaption>Pull requests run through GitHub Actions. Merges to <code>master</code> publish the site and start the Jenkins release.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="config" aria-labelledby="config-title">
+      <div class="container">
+        <h2 id="config-title">Under the hood</h2>
+        <p class="section-lead">The configuration that drives the pipeline, trimmed to the essentials.</p>
+        <div class="code-grid">
+          <figure class="code-card">
+            <figcaption>build.gradle</figcaption>
+<pre><code>tasks.register('verifySite') {
+    doLast {
+        def missing = requiredFiles.findAll {
+            !siteDir.file(it).asFile.exists()
+        }
+        if (missing) {
+            throw new GradleException(
+                "Missing site files: ${missing.join(', ')}")
+        }
+    }
+}
+
+tasks.register('siteZip', Zip) {
+    from siteDir
+    destinationDirectory =
+        layout.buildDirectory.dir('distributions')
+}</code></pre>
+          </figure>
+          <figure class="code-card">
+            <figcaption>Jenkinsfile</figcaption>
+<pre><code>stage('Deploy to production') {
+    when { branch 'master' }
+    steps {
+        input message: 'Does the staging environment look OK?'
+        milestone(1)
+        deployTo('production')
+    }
+}</code></pre>
+          </figure>
+          <figure class="code-card">
+            <figcaption>.github/workflows/ci.yml</figcaption>
+<pre><code>- uses: gradle/actions/setup-gradle@v4
+
+- name: Build and verify
+  run: ./gradlew build --no-daemon
+
+- name: Validate HTML
+  run: npx --yes html-validate@8 src/index.html</code></pre>
+          </figure>
+        </div>
+        <figure class="terminal" aria-label="Example build output">
+          <div class="terminal-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+<pre><code>$ ./gradlew build
+
+&gt; Task :verifySite
+&gt; Task :siteZip
+&gt; Task :assemble
+&gt; Task :check
+&gt; Task :build
+
+BUILD SUCCESSFUL</code></pre>
+          <figcaption>Example output of a local build</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="practices" aria-labelledby="practices-title">
+      <div class="container">
+        <h2 id="practices-title">Practices behind it</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Pull request workflow</h3>
+            <p>Changes land through reviewed pull requests, and the default branch stays releasable.</p>
+          </article>
+          <article class="card">
+            <h3>Build once, deploy many</h3>
+            <p>One artifact is promoted through each environment, so what was tested is what ships.</p>
+          </article>
+          <article class="card">
+            <h3>Manual approval gate</h3>
+            <p>Production releases wait for an explicit sign-off after staging is verified.</p>
+          </article>
+          <article class="card">
+            <h3>Secrets stay out of code</h3>
+            <p>Credentials live in the CI credential store and are never committed to the repository.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="stack" aria-labelledby="stack-title">
+      <div class="container">
+        <h2 id="stack-title">Tooling</h2>
+        <div class="table-wrap">
+          <table>
+            <caption class="visually-hidden">Technologies used</caption>
+            <thead>
+              <tr><th scope="col">Area</th><th scope="col">Tool</th><th scope="col">Role</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Build</th><td>Gradle 8.10.2</td><td>Verifies the site and packages it as a zip</td></tr>
+              <tr><th scope="row">Runtime</th><td>JDK 17 (Temurin)</td><td>Runs Gradle locally and in CI</td></tr>
+              <tr><th scope="row">CI</th><td>GitHub Actions</td><td>Build, HTML validation, Pages deploy</td></tr>
+              <tr><th scope="row">Release</th><td>Jenkins</td><td>Staging, approval gate, production</td></tr>
+              <tr><th scope="row">Transport</th><td>Publish over SSH</td><td>Copies the site to each environment</td></tr>
+              <tr><th scope="row">Frontend</th><td>HTML, CSS, vanilla JS</td><td>No framework or build step required</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>DevOps Essentials Sample App</p>
+      <p><a href="https://github.com/Gurmeta/devops-essentials-sample-app">github.com/Gurmeta/devops-essentials-sample-app</a></p>
+    </div>
+  </footer>
+
+  <script src="js/main.js" defer></script>
 </body>
 </html>
